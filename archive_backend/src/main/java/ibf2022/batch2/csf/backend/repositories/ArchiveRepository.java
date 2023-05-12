@@ -37,7 +37,7 @@ public class ArchiveRepository {
 	 * 	bundleId: bundleId
 	 * })
 	 */
-	public ArchiveUpload getBundleByBundleId(Integer bundleId) {
+	public ArchiveUpload getBundleByBundleId(String bundleId) {
 		Query q = new Query()
 			.addCriteria(Criteria.where("bundleId").is(bundleId));
 

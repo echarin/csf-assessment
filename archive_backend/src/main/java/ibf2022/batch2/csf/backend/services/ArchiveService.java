@@ -42,7 +42,7 @@ public class ArchiveService {
         }
     }
 
-    public ArchiveUpload getBundleByBundleId(Integer bundleId) throws BundleNotFoundException {
+    public ArchiveUpload getBundleByBundleId(String bundleId) throws BundleNotFoundException {
         try {
             ArchiveUpload au = aRepo.getBundleByBundleId(bundleId);
             if (au == null)

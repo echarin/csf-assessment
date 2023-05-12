@@ -20,7 +20,7 @@ export class ArchiveService {
     return this.httpClient.post<Bundle>(url, fd);
   }
 
-  getBundleById(bundleId: number): Observable<Bundle> {
+  getBundleById(bundleId: String): Observable<Bundle> {
     const url = `${this.apiUrl}/bundle/${bundleId}`;
     return this.httpClient.get<Bundle>(url, { headers: this.jsonHeaders });
   }

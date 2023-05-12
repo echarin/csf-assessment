@@ -1,13 +1,9 @@
 package ibf2022.batch2.csf.backend.repositories;
 
-import java.io.File;
-import java.io.FileInputStream;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
@@ -44,21 +40,8 @@ public class ImageRepository {
 
 	private List<String> IMG_EXTENSIONS = Arrays.asList("png", "gif", "jpg", "jpeg");
 
-	//TODO: Task 3
-	// You are free to change the parameter and the return type
-	// Do not change the method's name
-	// Returns the bundleId of the uploaded bundle
 	public S3Upload upload(ArchiveDownload ad) throws IOException, FileUploadException {
-		// Expand the ZIP archive, assuming that there are no directories in the ZIP file
-		// The ZIP file contains only images in different formats (PNG, GIF, JPG, etc)
-		// For each image, do the following
-			// Set the content type e.g. image/png for a PNG file, image/gif for GIF, etc
-				// Determine image type by examine filename's suffix
-			// Set the image size
-			// Make the uploaded file publicly available
-			// Image files with the same name should not overwrite existing file names with the same name
-				// Therefore you should probably hash it together with the date of upload
-		// Upload each image into S3 bucket
+		System.out.println("Bucket: " + bucketName);
 		if (ad.getArchive() == null) {
 			throw new FileUploadException("Failed to upload file: No file was provided");
 		}
@@ -67,20 +50,23 @@ public class ImageRepository {
 		s3u.setBundleId(this.generateUUID());
 
 		List<ImageFile> images = this.unzipArchive(ad.getArchive());
-		System.out.println(images.toString());
 		Map<String, String> userData = this.returnUserData(ad);
+
+		System.out.println(images.toString());
+		
 		for (ImageFile image : images) {
 			ObjectMetadata metadata = new ObjectMetadata();
 			metadata.setContentType(image.getContentType());
 			metadata.setContentLength(image.getImageSize());
 			metadata.setUserMetadata(userData);
-			try (InputStream is = new FileInputStream(image.getFile())) {
-				String key = image.getMd5Hash();
+			try (InputStream is = new ByteArrayInputStream(image.getData())) {
+				String key = image.getMd5Hash() + "." + image.getFileExtension();
 				PutObjectRequest putReq = new PutObjectRequest(bucketName, key, is, metadata);
 				putReq.withCannedAcl(CannedAccessControlList.PublicRead);
 				s3Client.putObject(putReq);
 
-				s3u.appendUrl(s3Client.getUrl(bucketName, key).toString());
+				String url = s3Client.getUrl(bucketName, key).toString();
+				s3u.appendUrl(url);
 			}
 		}
 
@@ -89,13 +75,7 @@ public class ImageRepository {
 		return s3u;
 	}
 
-	// Get an input stream out of the MultipartFile archive, which is a ZIP file
-	// While there is a next entry, check if the extension matches an image file
-	// For each image file, store it into the images folder of the root Spring Boot directory
-		// Generate a new ImageFile and then insert metadata through setters
-	// Then return List<ImageFile>
 	private List<ImageFile> unzipArchive(MultipartFile archive) throws IOException {
-		Path path = Paths.get("archive_backend/images");
 		ZipInputStream zis = new ZipInputStream(archive.getInputStream());
 		ZipEntry ze;
 		List<ImageFile> images = new LinkedList<>();
@@ -105,24 +85,20 @@ public class ImageRepository {
 			String fileExtension = fileName.substring(fileName.lastIndexOf(".") + 1).toLowerCase();
 			System.out.println(fileExtension);
 			if (this.IMG_EXTENSIONS.contains(fileExtension)) {
-				System.out.println("Correct");
+				System.out.println("Valid file found");
 				ImageFile image = new ImageFile();
-				image.setContentType("image/" + fileExtension);
 				image.setFileName(fileName);
+				image.setFileExtension(fileExtension);
+				image.setContentType("image/" + fileExtension);
 
-				byte[] byteArray = new byte[(int) ze.getSize()];
-				IOUtils.readFully(zis, byteArray);
+				ByteArrayOutputStream bos = new ByteArrayOutputStream();
+				IOUtils.copy(zis, bos);
+				byte[] byteArray = bos.toByteArray();
 				image.setImageSize(byteArray.length);
+				image.setData(byteArray);
 				image.generateMd5Hash();
 				System.out.println(image.toString());
 
-				File tempFile = Files.createTempFile(path, image.getMd5Hash(), "").toFile();
-				try (OutputStream out = Files.newOutputStream(tempFile.toPath())) {
-					IOUtils.write(byteArray, out);
-					image.setFile(tempFile);
-				}
-
-				System.out.println(image.toString());
 				images.add(image);
 			}
 			zis.closeEntry();

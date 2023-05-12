@@ -22,7 +22,7 @@ export class ArchiveDisplayComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.activatedRoute.params.pipe(
       switchMap((params) => {
-        const bundleId: number = params['bundleId'];
+        const bundleId: String = params['bundleId'];
         return bundleId? this.aSvc.getBundleById(bundleId) : of(null);
       }),
       takeUntil(this.unsubscribe$)

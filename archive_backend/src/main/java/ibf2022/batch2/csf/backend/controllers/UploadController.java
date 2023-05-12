@@ -57,13 +57,9 @@ public class UploadController {
 	public ResponseEntity<String> getBundleByBundleId(@PathVariable String bundleId) {
 		String errorJsonString;
 		try {
-			Integer bundleIdInt = Integer.parseInt(bundleId);
-			ArchiveUpload au = aSvc.getBundleByBundleId(bundleIdInt);
+			ArchiveUpload au = aSvc.getBundleByBundleId(bundleId);
 			JsonObject auJsonObject = au.toJson();
 			return ResponseEntity.status(HttpStatus.OK).body(auJsonObject.toString());
-		} catch (NumberFormatException ex) {
-			errorJsonString = Json.createObjectBuilder().add("error", ex.getMessage()).build().toString();
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorJsonString);
 		} catch (BundleNotFoundException ex) {
 			errorJsonString = Json.createObjectBuilder().add("error", ex.getMessage()).build().toString();
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorJsonString);
