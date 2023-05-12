@@ -36,6 +36,7 @@ export class ArchiveUploadComponent implements OnInit, OnDestroy {
   
 
   onSubmit(): void {
-    // Call upon aSvc
+    // Extract form values
+    // Pass in values to aSvc
   }
 }
