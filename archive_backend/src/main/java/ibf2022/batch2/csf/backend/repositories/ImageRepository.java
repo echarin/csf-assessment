@@ -42,7 +42,7 @@ public class ImageRepository {
     @Value("${do.storage.bucketname}")
     private String bucketName;
 
-	private List<String> IMG_EXTENSIONS = Arrays.asList(".png", ".gif", ".jpg", ".jpeg");
+	private List<String> IMG_EXTENSIONS = Arrays.asList("png", "gif", "jpg", "jpeg");
 
 	//TODO: Task 3
 	// You are free to change the parameter and the return type
@@ -67,6 +67,7 @@ public class ImageRepository {
 		s3u.setBundleId(this.generateUUID());
 
 		List<ImageFile> images = this.unzipArchive(ad.getArchive());
+		System.out.println(images.toString());
 		Map<String, String> userData = this.returnUserData(ad);
 		for (ImageFile image : images) {
 			ObjectMetadata metadata = new ObjectMetadata();
@@ -84,6 +85,7 @@ public class ImageRepository {
 		}
 
 		s3u.setDate(new Date());
+		System.out.println(s3u.toString());
 		return s3u;
 	}
 
@@ -103,21 +105,27 @@ public class ImageRepository {
 			String fileExtension = fileName.substring(fileName.lastIndexOf(".") + 1).toLowerCase();
 			System.out.println(fileExtension);
 			if (this.IMG_EXTENSIONS.contains(fileExtension)) {
+				System.out.println("Correct");
 				ImageFile image = new ImageFile();
 				image.setContentType("image/" + fileExtension);
 				image.setFileName(fileName);
-				image.setImageSize(ze.getSize());
+
+				byte[] byteArray = new byte[(int) ze.getSize()];
+				IOUtils.readFully(zis, byteArray);
+				image.setImageSize(byteArray.length);
 				image.generateMd5Hash();
+				System.out.println(image.toString());
 
 				File tempFile = Files.createTempFile(path, image.getMd5Hash(), "").toFile();
 				try (OutputStream out = Files.newOutputStream(tempFile.toPath())) {
-					IOUtils.copy(zis, out);
+					IOUtils.write(byteArray, out);
+					image.setFile(tempFile);
 				}
 
-				image.setFile(tempFile);
-
+				System.out.println(image.toString());
 				images.add(image);
-			} else { continue; }
+			}
+			zis.closeEntry();
 		}
 
 		zis.close();

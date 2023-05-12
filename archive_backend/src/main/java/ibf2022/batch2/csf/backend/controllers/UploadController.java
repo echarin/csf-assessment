@@ -14,6 +14,7 @@ import ibf2022.batch2.csf.backend.models.ArchiveDownload;
 import ibf2022.batch2.csf.backend.models.S3Upload;
 import ibf2022.batch2.csf.backend.services.ArchiveService;
 import ibf2022.batch2.csf.backend.services.ImageService;
+import ibf2022.batch2.csf.exceptions.BundleUploadException;
 import ibf2022.batch2.csf.exceptions.FileUploadException;
 
 @RestController
@@ -28,15 +29,14 @@ public class UploadController {
 		@RequestPart MultipartFile archive, @RequestPart String name, @RequestPart String title, @RequestPart String comments
 	) {
 		ArchiveDownload ad = ArchiveDownload.create(name, title, comments, archive);
-		S3Upload s3u;
 
 		try {
-			imgSvc.upload(ad);
-		} catch (FileUploadException ex) {
+			S3Upload s3u = imgSvc.upload(ad);
+			String bundleIdJsonString = aSvc.recordBundle(ad, s3u);
+			return ResponseEntity.status(HttpStatus.CREATED).body(bundleIdJsonString);
+		} catch (FileUploadException | BundleUploadException ex) {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ex.getMessage());
 		}
-		
-		return ResponseEntity.status(HttpStatus.CREATED).body("File created successfully");
 	}
 
 	// TODO: Task 5
