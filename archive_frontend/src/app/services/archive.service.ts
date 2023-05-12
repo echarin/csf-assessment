@@ -12,8 +12,8 @@ export class ArchiveService {
 
   constructor(private httpClient: HttpClient) { }
 
-  // Possibly pass in a model called Upload, or FormData
-  postBundle(fd: FormData): Observable<any> {
+  // Probably returns Observable of Bundle
+  postUpload(fd: FormData): Observable<any> {
     const url = `${this.apiUrl}/upload`;
     return this.httpClient.post(url, fd, { headers: this.headers });
   }

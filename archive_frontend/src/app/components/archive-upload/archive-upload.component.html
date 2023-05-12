@@ -9,7 +9,7 @@
     <textarea formControlName="comments" placeholder="Your comments in here"></textarea>
     <br>
     <label for="">Archive:</label>
-    <input type="file" formControlName="archive">
+    <input type="file" formControlName="archive" accept=".zip" #archive>
     <br>
     <button type="button" (click)="onCancel()">Cancel</button>
     <button type="submit" [disabled]="uploadForm.invalid">Submit</button>
