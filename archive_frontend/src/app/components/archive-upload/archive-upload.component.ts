@@ -52,7 +52,7 @@ export class ArchiveUploadComponent implements OnInit, OnDestroy {
         takeUntil(this.unsubscribe$),
       ).subscribe({
         next: (bundle) => {
-          this.router.navigate(['/bundle', bundle['bundleId']]);
+          this.router.navigate(['/bundle', bundle.body['bundleId']]);
         },
         error: (err) => {
           // Todo

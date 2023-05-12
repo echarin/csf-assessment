@@ -7,7 +7,7 @@ import { ArchiveDisplayComponent } from './components/archive-display/archive-di
 const routes: Routes = [
   { path: 'list', component: ArchiveListComponent },
   { path: 'upload', component: ArchiveUploadComponent },
-  { path: 'display', component: ArchiveDisplayComponent },
+  { path: 'bundle/:bundleId', component: ArchiveDisplayComponent },
   { path: '**', redirectTo: '/list', pathMatch: 'full' },
 ];
 
