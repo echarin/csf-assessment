@@ -1,6 +1,5 @@
 package ibf2022.batch2.csf.backend.controllers;
 
-import org.apache.tomcat.util.http.fileupload.FileUploadException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -11,8 +10,11 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import ibf2022.batch2.csf.backend.models.ArchiveDownload;
+import ibf2022.batch2.csf.backend.models.S3Upload;
 import ibf2022.batch2.csf.backend.services.ArchiveService;
 import ibf2022.batch2.csf.backend.services.ImageService;
+import ibf2022.batch2.csf.exceptions.FileUploadException;
 
 @RestController
 @CrossOrigin(origins = "*")
@@ -25,8 +27,11 @@ public class UploadController {
 	public ResponseEntity<String> postUpload(
 		@RequestPart MultipartFile archive, @RequestPart String name, @RequestPart String title, @RequestPart String comments
 	) {
+		ArchiveDownload ad = ArchiveDownload.create(name, title, comments, archive);
+		S3Upload s3u;
+
 		try {
-			imgSvc.upload();
+			imgSvc.upload(ad);
 		} catch (FileUploadException ex) {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ex.getMessage());
 		}
