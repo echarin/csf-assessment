@@ -9,19 +9,24 @@ import { Bundle } from '../models/bundle';
 })
 export class ArchiveService {
   private apiUrl = environment.sbApiUrl;
-  private headers = new HttpHeaders().set('Content-Type', 'application/json');
+  private jsonHeaders = new HttpHeaders().set('Content-Type', 'application/json');
 
   constructor(private httpClient: HttpClient) { }
 
   // Probably returns Observable of Bundle
-  postUpload(fd: FormData): Observable<any> {
+  postUpload(fd: FormData): Observable<Bundle> {
     const url = `${this.apiUrl}/upload`;
     // Do not set Content-Type, or else it will not give multipart boundaries
-    return this.httpClient.post(url, fd);
+    return this.httpClient.post<Bundle>(url, fd);
   }
 
   getBundleById(bundleId: number): Observable<Bundle> {
     const url = `${this.apiUrl}/bundle/${bundleId}`;
-    return this.httpClient.get<Bundle>(url, { headers: this.headers });
+    return this.httpClient.get<Bundle>(url, { headers: this.jsonHeaders });
+  }
+
+  getBundles(): Observable<Bundle[]> {
+    const url = `${this.apiUrl}/bundles`;
+    return this.httpClient.get<Bundle[]>(url, { headers: this.jsonHeaders });
   }
 }

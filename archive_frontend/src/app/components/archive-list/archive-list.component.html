@@ -1,1 +1,13 @@
-<p>archive-list works!</p>
+<h1>Photo Storage</h1>
+<button type="button" (click)="goUpload()">Upload</button>
+<div *ngIf="archives; else noArchives">
+    <div *ngFor="let archive in archives">
+        {{ archive.title }}, {{ archive.date }}
+    </div>
+</div>
+
+<ng-template #noArchives>
+    <div>
+        No archives uploaded yet.
+    </div>
+</ng-template>

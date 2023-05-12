@@ -71,5 +71,8 @@ public class UploadController {
 	
 
 	// TODO: Task 6
-
+	@GetMapping(path = "/bundles", consumes = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<String> getAllBundles() {
+		
+	}
 }

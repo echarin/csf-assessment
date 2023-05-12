@@ -33,7 +33,7 @@ export class ArchiveDisplayComponent implements OnInit, OnDestroy {
       },
       error: (err) => {
         console.log(err);
-        this.router.navigate(['/']);
+        this.router.navigate(['/bundles']);
       }
     });
   }
@@ -41,5 +41,10 @@ export class ArchiveDisplayComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.unsubscribe$.next();
     this.unsubscribe$.complete();
+  }
+
+  // This is view 2: details; go back to view 1: upload
+  goBack(): void {
+    this.router.navigate(['/upload']);
   }
 }

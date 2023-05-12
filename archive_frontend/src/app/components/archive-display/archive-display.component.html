@@ -1,1 +1,11 @@
-<p>archive-display works!</p>
+<div *ngIf="bundle">
+    {{ bundle.title }}
+    {{ bundle.name }}, {{ bundle.date }}
+    <div *ngIf="bundle.comments">
+        <p>{{ bundle.comments }}</p>
+    </div>
+    <div *ngFor="let url of bundle.urls">
+        <img [src]="url">
+    </div>
+    <button type="button" (click)="goBack()">Back</button>
+</div>

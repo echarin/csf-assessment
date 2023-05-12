@@ -4,5 +4,6 @@ export interface Bundle {
     name: String;
     title: String;
     comments: String | null;
+    // Handle this later
     urls: String;
 }
