@@ -6,6 +6,7 @@ import { AppComponent } from './app.component';
 import { ArchiveListComponent } from './components/archive-list/archive-list.component';
 import { ArchiveUploadComponent } from './components/archive-upload/archive-upload.component';
 import { ArchiveDisplayComponent } from './components/archive-display/archive-display.component';
+import { ReactiveFormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [
@@ -16,7 +17,8 @@ import { ArchiveDisplayComponent } from './components/archive-display/archive-di
   ],
   imports: [
     BrowserModule,
-    AppRoutingModule
+    AppRoutingModule,
+    ReactiveFormsModule
   ],
   providers: [],
   bootstrap: [AppComponent]
