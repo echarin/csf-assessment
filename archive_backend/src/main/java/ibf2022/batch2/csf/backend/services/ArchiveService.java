@@ -1,5 +1,7 @@
 package ibf2022.batch2.csf.backend.services;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -10,6 +12,8 @@ import ibf2022.batch2.csf.backend.repositories.ArchiveRepository;
 import ibf2022.batch2.csf.exceptions.ArchiveUploadException;
 import ibf2022.batch2.csf.exceptions.BundleNotFoundException;
 import jakarta.json.Json;
+import jakarta.json.JsonArray;
+import jakarta.json.JsonArrayBuilder;
 import jakarta.json.JsonObject;
 
 @Service
@@ -48,4 +52,18 @@ public class ArchiveService {
             throw ex;
         }
     }
+
+    public List<ArchiveUpload> getBundles() {
+        try {
+            return aRepo.getBundles();
+        } catch (Exception ex) {
+            throw ex;
+        }
+    }
+
+    public JsonArray bundlesToJson(List<ArchiveUpload> bundles) {
+        JsonArrayBuilder jab = Json.createArrayBuilder();
+        bundles.forEach(bundle -> jab.add(bundle.toJson()));
+        return jab.build();
+    } 
 }

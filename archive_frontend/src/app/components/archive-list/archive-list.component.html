@@ -2,7 +2,7 @@
 <button type="button" (click)="goUpload()">Upload</button>
 <div *ngIf="archives; else noArchives">
     <div *ngFor="let archive in archives">
-        {{ archive.title }}, {{ archive.date }}
+        <a [routerLink]="['/bundle', archive.bundleId]">{{ archive.title }}, {{ archive.date }}</a>
     </div>
 </div>
 

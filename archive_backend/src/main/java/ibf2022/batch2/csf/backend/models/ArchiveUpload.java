@@ -1,5 +1,6 @@
 package ibf2022.batch2.csf.backend.models;
 
+import java.time.Instant;
 import java.util.Date;
 
 import jakarta.json.Json;
@@ -20,9 +21,11 @@ public class ArchiveUpload {
     public JsonArray urls;
 
     public JsonObject toJson() {
+        Instant dateInstant = this.date.toInstant();
+        String dateISO = dateInstant.toString();
         JsonObjectBuilder job = Json.createObjectBuilder()
                                 .add("bundleId", bundleId)
-                                .add("date", date.toString())
+                                .add("date", dateISO)
                                 .add("name", name)
                                 .add("title", title)
                                 .add("comments", comments)

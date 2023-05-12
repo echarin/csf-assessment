@@ -1,6 +1,10 @@
 package ibf2022.batch2.csf.backend.repositories;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -14,13 +18,8 @@ public class ArchiveRepository {
 
 	private static final String ARCHIVES_COLLECTION_NAME = "archives";
 
-	//TODO: Task 4
-	// You are free to change the parameter and the return type
-	// Do not change the method's name
-	// Write the native mongo query that you will be using in this method
-	//
 	/* 
-	 * db.getCollection("bundles").insertOne({
+	 * db.getCollection("archives").insertOne({
 	 * 	"bundleId": "bundleId",
 	 *	etc...
 	 * })
@@ -33,19 +32,15 @@ public class ArchiveRepository {
 		}
 	}
 
-	//TODO: Task 5
-	// You are free to change the parameter and the return type
-	// Do not change the method's name
-	// Write the native mongo query that you will be using in this method
-	//
 	/* 
-	 * db.getCollection("bundles").findOne({
+	 * db.getCollection("archives").findOne({
 	 * 	bundleId: bundleId
 	 * })
 	 */
 	public ArchiveUpload getBundleByBundleId(Integer bundleId) {
 		Query q = new Query()
 			.addCriteria(Criteria.where("bundleId").is(bundleId));
+
 		try {
 			return this.mongoTemplate.findOne(q, ArchiveUpload.class, ARCHIVES_COLLECTION_NAME);
 		} catch (Exception ex) {
@@ -53,15 +48,17 @@ public class ArchiveRepository {
 		}
 	}
 
-	//TODO: Task 6
-	// You are free to change the parameter and the return type
-	// Do not change the method's name
-	// Write the native mongo query that you will be using in this method
-	//
-	//
-	public Object getBundles(/* any number of parameters here */) {
-		return null;
-	}
-
-
+	/* 
+	 * db.getCollection("archives").find({sort: { date: -1, title: 1 }})
+	 */
+	public List<ArchiveUpload> getBundles() {
+		Query q = new Query()
+			.with(Sort.by(Direction.DESC, "date")
+			.and(Sort.by(Direction.ASC, "title")));
+		try {
+			return this.mongoTemplate.find(q, ArchiveUpload.class, ARCHIVES_COLLECTION_NAME);
+		} catch (Exception ex) {
+			throw ex;
+		}
+	}	
 }
