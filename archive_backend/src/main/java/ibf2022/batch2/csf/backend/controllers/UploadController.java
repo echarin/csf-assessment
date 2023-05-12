@@ -16,6 +16,7 @@ import ibf2022.batch2.csf.backend.services.ArchiveService;
 import ibf2022.batch2.csf.backend.services.ImageService;
 import ibf2022.batch2.csf.exceptions.BundleUploadException;
 import ibf2022.batch2.csf.exceptions.FileUploadException;
+import jakarta.json.Json;
 
 @RestController
 @CrossOrigin(origins = "*")
@@ -30,12 +31,18 @@ public class UploadController {
 	) {
 		ArchiveDownload ad = ArchiveDownload.create(name, title, comments, archive);
 
+		// To simulate an error
+		// FileUploadException fuEx = new FileUploadException("File failed to upload");
+		// String errorJsonString = Json.createObjectBuilder().add("error", fuEx.getMessage()).build().toString();
+		// return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorJsonString);
+
 		try {
 			S3Upload s3u = imgSvc.upload(ad);
 			String bundleIdJsonString = aSvc.recordBundle(ad, s3u);
 			return ResponseEntity.status(HttpStatus.CREATED).body(bundleIdJsonString);
 		} catch (FileUploadException | BundleUploadException ex) {
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ex.getMessage());
+			String errorJsonString = Json.createObjectBuilder().add("error", ex.getMessage()).build().toString();
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorJsonString);
 		}
 	}
 

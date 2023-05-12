@@ -1,6 +1,7 @@
 import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { Subject, takeUntil } from 'rxjs';
 import { ArchiveService } from 'src/app/services/archive.service';
 
 @Component({
@@ -11,6 +12,7 @@ import { ArchiveService } from 'src/app/services/archive.service';
 export class ArchiveUploadComponent implements OnInit, OnDestroy {
   uploadForm!: FormGroup
   @ViewChild('archive') archiveFile!: ElementRef;
+  private unsubscribe$ = new Subject<void>();
 
   constructor (
     private fb: FormBuilder, 
@@ -28,7 +30,8 @@ export class ArchiveUploadComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-      
+    this.unsubscribe$.next();
+    this.unsubscribe$.complete();
   }
 
   onCancel(): void {
@@ -45,9 +48,17 @@ export class ArchiveUploadComponent implements OnInit, OnDestroy {
       formData.set('title', this.uploadForm.get('title')?.value);
       formData.set('comments', this.uploadForm.get('comments')?.value);
       formData.set('archive', this.archiveFile.nativeElement.files[0]);
-      this.aSvc.postUpload(formData).subscribe({
-        next: (bundle) => {},
-        error: (err) => {},
+      this.aSvc.postUpload(formData).pipe(
+        takeUntil(this.unsubscribe$),
+      ).subscribe({
+        next: (bundle) => {
+          this.router.navigate(['/bundle', bundle['bundleId']]);
+        },
+        error: (err) => {
+          // Todo
+          console.log(err.error['error']);
+          alert(err.error['error']);
+        },
         complete: () => {}
       });
     }
