@@ -36,6 +36,6 @@ export class ArchiveListComponent implements OnInit, OnDestroy {
   }
 
   goUpload(): void {
-    this.router.navigate(['/upload']);
+    this.router.navigate(['/form']);
   }
 }

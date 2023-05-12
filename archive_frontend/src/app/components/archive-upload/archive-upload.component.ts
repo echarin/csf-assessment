@@ -35,7 +35,7 @@ export class ArchiveUploadComponent implements OnInit, OnDestroy {
   }
 
   onCancel(): void {
-    this.router.navigate(['/list']);
+    this.router.navigate(['/home']);
   }
   
 
@@ -52,7 +52,7 @@ export class ArchiveUploadComponent implements OnInit, OnDestroy {
         takeUntil(this.unsubscribe$),
       ).subscribe({
         next: (bundle) => {
-          this.router.navigate(['/bundle', bundle.bundleId]);
+          this.router.navigate(['/display', bundle.bundleId]);
         },
         error: (err) => {
           // Todo

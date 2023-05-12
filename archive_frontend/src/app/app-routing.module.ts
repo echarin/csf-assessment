@@ -5,10 +5,10 @@ import { ArchiveUploadComponent } from './components/archive-upload/archive-uplo
 import { ArchiveDisplayComponent } from './components/archive-display/archive-display.component';
 
 const routes: Routes = [
-  { path: 'bundles', component: ArchiveListComponent },
-  { path: 'upload', component: ArchiveUploadComponent },
-  { path: 'bundle/:bundleId', component: ArchiveDisplayComponent },
-  { path: '**', redirectTo: '/bundles', pathMatch: 'full' },
+  { path: 'home', component: ArchiveListComponent },
+  { path: 'form', component: ArchiveUploadComponent },
+  { path: 'display/:bundleId', component: ArchiveDisplayComponent },
+  { path: '**', redirectTo: '/home', pathMatch: 'full' },
 ];
 
 @NgModule({
